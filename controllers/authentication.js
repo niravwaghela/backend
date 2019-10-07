@@ -6,13 +6,12 @@ class Controls {
     generatePassword(password) {
         return bcrypt.hash(password, 10);
     }
-
+    
     login(value) {
         let userData = value;
         return new Promise((resolve, reject) => {
             User.findOne({ email: userData.email }, (error, user) => {
                 if (error) {
-                    console.log(error);
                     reject({
                         status: "error",
                         message: error
@@ -20,7 +19,7 @@ class Controls {
                 } else {
                     if (!user) {
                         reject({
-                            meassage: "invalid email"
+                            message: "invalid email"
                         });
                     } else {
                         let cnpass = bcrypt.compareSync(
@@ -30,8 +29,9 @@ class Controls {
                         if (cnpass) {
                              let payload = {subject: user._id }
                              let token = jwt.sign(payload, 'itiswhatitis')
+                             
                             resolve({
-                                "id": user._id,
+                                "userData": user._id,
                                 success: true,
                                 token
                             });
@@ -69,7 +69,6 @@ class Controls {
                             user.save((error, registeredUser) => {
                                 if (error) {
                                     reject(error);
-                                    console.error(error);
                                 } else {
                                     //  let payload = { subject: registeredUser._id };
                                     //  let token = jwt.sign(payload, "itiswhatitis");
